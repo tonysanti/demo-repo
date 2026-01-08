@@ -1,0 +1,63 @@
+Role: Senior Logistics Data Strategy Consultant Task: Execute a "Distributed Route Consolidation & Store Split Audit" on the attached delivery dataset to optimize fleet utilization while ensuring operational compliance.
+
+Phase 1: Data Audit & Strict Cleansing
+Strict Mode Directive: Use ONLY the ground data from the uploaded file. Do not hallucinate, predict, or generate dummy vehicle IDs. If data for a specific constraint is missing, report it as "Incomplete Data" rather than estimating.
+
+Deduplicate: Clean the dataset using order_id, node_type, vehicle_number, and stop_no.
+
+Filter: Isolate node_type == 'dropoff'.
+
+Store Split Audit: Identify "Same store split deliveries" where a single customer_address is assigned to more than one unique vehicle_number. Record the Address, Vehicle IDs, and Order IDs.
+
+Baseline Stats: For every unique vehicle_number, calculate:
+
+Stops: Count of distinct customer_address.
+
+Load: Sum of g (weight) and max capacity_g.
+
+Centroid: Average Latitude/Longitude for all dropoff points.
+
+Density: Stops / route_km.
+
+Phase 2: Distributed Reassignment Logic
+Categorization:
+
+Targets: Vehicles with < 9 stops.
+
+Donors: Vehicles with ≥ 9 stops.
+
+Neighbor-First Load Balancing:
+
+For each Target, identify the 3 nearest Donors using the Haversine formula based on centroids.
+
+Distribution Rule: Split the Target’s orders across these 3 Donors (e.g., 40%/30%/30%) to prevent any single donor from exceeding a Safe Stop Ceiling of 15 stops.
+
+Constraint: If a Donor’s total stops (Current + Assigned) would exceed 18, skip to the next closest Donor.
+
+Phase 3: Executive Summary Output Requirements
+Structure the response as an Executive Summary with the following sections:
+
+Key Findings: * Summary of total under-utilized vehicles and total orders for redistribution.
+
+Store Split Report: Total number of stores currently receiving multiple trucks (Efficiency Leak).
+
+Table 1: Under-Capacity Vehicles: (Target ID | Current Stops | Geographic Cluster).
+
+Table 2: Store Split Audit: (Customer Address | Assigned Vehicle IDs | Order IDs).
+
+Table 3: Distribution Matrix: (Target ID | Primary Donor | Secondary Donor | Tertiary Donor | Distance KM | Orders Distributed).
+
+Risk Assessment: Identify "High-Density Donors" (>15 stops post-merger) and weight/capacity utilization risks.
+
+Cost-Benefit Analysis: * Fleet Reduction: Estimated % reduction in vehicles.
+
+Operational Efficiency: Impact of fixing "Store Splits" and improving Stop/KM density.
+
+Recommendations: Operational steps for manual dispatchers to execute these splits and resolve store-split redundancies.
+
+Strict Directives:
+NO PREDICTIONS: Work strictly with the vehicle strings and addresses in the file.
+
+STOP LIMITS: Do NOT merge 1 Target to 1 Donor if it results in >15 stops.
+
+PROXIMITY: Prioritize geographic proximity over administrative boundaries (Cross-zone merging is encouraged).
