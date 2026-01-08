@@ -1,51 +1,41 @@
-Role: Senior Logistics Data Strategy Consultant & Innovation Manager Context: Strategic Fleet Optimization for PTTOR/Allnow Operations Core Directive: You MUST execute a Python-based data audit before generating the summary. Do not estimate or predict values; every figure in the tables must be derived from code execution on the attached Excel File.
+Role: Senior Logistics Data Strategy Consultant & Innovation Manager Context: Strategic Fleet Optimization for PTTOR/Allnow Operations Core Directive: You MUST execute a Python-based data audit before generating the summary. Start by listing the total unique vehicle count and the column names found. Do not estimate or predict values; every figure in the tables must be derived from code execution on the attached file.
 
 Phase 1: High-Precision Data Audit (Code-First)
 
-Header Mapping: Identify columns for vehicle_number, customer_address, node_type, dropoff_location_lat, dropoff_location_lon, and g.
+Validation: Print unique count of vehicle_number.
 
-Stop Definition (Strict): Count a "Stop" ONLY as a unique customer_address where node_type == 'dropoff'.
+Stop Definition (Strict): A 'Stop' = Unique customer_address where node_type == 'dropoff'.
 
-Segmentation: * Targets: unique stops < 9.
+Segmentation: Targets (< 9 stops), Donors (≥ 9 stops).
 
-Donors: unique stops ≥ 9.
-
-Store Split Audit: Group by customer_address and list any address serviced by >1 unique vehicle_number.
+Store Split Audit: Identify any customer_address serviced by >1 vehicle_number.
 
 Phase 2: Proximity-Based Reassignment Logic
 
-Centroid Calculation: Compute the average Lat/Lon for each vehicle based on its drop-off points.
+Centroid Calculation: Average Lat/Lon per vehicle based on drop-offs.
 
-Haversine Matrix: Calculate the distance between Target centroids and all Donor centroids. Identify the top 3 closest Donors for every Target.
+Haversine Matrix: Identify top 3 closest Donors for every Target.
 
-The 40/30/30 Rule: Split the Target’s unique stop count: 40% to Primary, 30% to Secondary, 30% to Tertiary.
+Redistribution: Reassign the Target's orders using the 40/30/30 rule. If a Target has < 3 unique stops, prioritize the Primary Donor for all volume.
 
-Constraint Check: * Safe Ceiling: Flag any Donor exceeding 15 total stops post-merger.
+Constraint Check: - Safe Ceiling: 15 stops.
 
-Hard Limit: If a Donor would exceed 18 unique stops, skip to the next closest candidate.
+Hard Limit: 18 stops. If exceeded, move to the next closest candidate.
 
 Phase 3: Executive Summary (Strategic Format)
 
-Executive Summary: Fleet reduction potential (Target vs. Total Fleet).
+Executive Summary: Fleet reduction % and count.
 
-Key Findings: Total Store Splits and volume (Orders/Weight) moved.
+Key Findings: Store Splits and total Weight/Orders moved.
 
-Table 1: Store Split Redundancy: (Address | Overlapping Vehicle IDs | Total Orders).
+Table 1: Store Split Redundancy (Address | Overlapping Vehicle IDs | Total Orders).
 
-Table 2: Target Vehicle Decommissioning List: (Target Vehicle ID | Current Unique Stops | Geographic Cluster).
+Table 2: Target Vehicle Decommissioning List (All 12+ Targets | Stop Count | Region/Cluster).
 
-Table 3: Redistribution Matrix: (Target ID | Primary/Secondary/Tertiary Donors | Distance KM | New Estimated Stop Count). Note: List all Targets identified; do not summarize.
+Table 3: Redistribution Matrix (Target ID | Donors | Distance KM | New Est. Stop Count). Do not summarize; list all Targets.
 
-Risk Assessment: Identify Donors pushed to >15 stops and potential service time risks.
+Risk Assessment: Flag Donors >15 stops.
 
-Cost-Benefit Analysis: Estimated % reduction in fixed costs and density improvement.
+Cost-Benefit Analysis: % Fixed cost reduction and Stops-per-KM improvement.
 
-Recommendations: Immediate tactical steps for the dispatch team.
-
-Strict Directives:
-
-Naming: Use exact vehicle_number strings.
-
-Data Integrity: Report "Geographic Data Incomplete" if Lat/Lon is missing for any row.
-
-Zero Hallucination: Only use the provided dataset.
+Recommendations: Tactical steps for dispatch.
