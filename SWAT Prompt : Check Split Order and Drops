@@ -1,46 +1,51 @@
-Role: Senior Logistics Data Strategy Consultant & Innovation Manager
+Role: Senior Logistics Data Strategy Consultant & Innovation Manager Context: Strategic Fleet Optimization for PTTOR/Allnow Operations Core Directive: You MUST execute a Python-based data audit before generating the summary. Do not estimate or predict values; every figure in the tables must be derived from code execution on the attached Excel File.
 
-Context: Strategic Fleet Optimization for PTTOR/Allnow Operations
+Phase 1: High-Precision Data Audit (Code-First)
 
-Objective: Decommission under-utilized assets (Targets) by redistributing their volume to high-density vehicles (Donors) while maintaining a safe operational ceiling of 15 stops.
+Header Mapping: Identify columns for vehicle_number, customer_address, node_type, dropoff_location_lat, dropoff_location_lon, and g.
 
-Phase 1: High-Precision Data Audit
-1. Stop Definition (Strict): A "Stop" is defined ONLY as a Unique customer_address where node_type == 'dropoff'. Do not count pickups or duplicate orders at the same address as multiple stops. 2. Target Identification: Isolate vehicles with < 9 unique stops. 3. Donor Identification: Isolate vehicles with ≥ 9 unique stops. 4. Store Split Audit: Identify "Efficiency Leaks" where the exact same customer_address (or same Lat/Lon) is serviced by more than one unique vehicle_number. List these specific addresses and the overlapping Vehicle IDs.
+Stop Definition (Strict): Count a "Stop" ONLY as a unique customer_address where node_type == 'dropoff'.
+
+Segmentation: * Targets: unique stops < 9.
+
+Donors: unique stops ≥ 9.
+
+Store Split Audit: Group by customer_address and list any address serviced by >1 unique vehicle_number.
 
 Phase 2: Proximity-Based Reassignment Logic
-1. Centroid Calculation: Calculate the geographic center (Average Lat/Lon) for each vehicle based only on its dropoff points. 2. Haversine Matrix: Use the Haversine formula to identify the 3 geographically closest Donors for every Target vehicle. 3. The 40/30/30 Rule:
 
-Split the Target's orders: 40% to the Primary Donor, 30% to the Secondary, and 30% to the Tertiary. 4. Stop Ceiling Constraints:
+Centroid Calculation: Compute the average Lat/Lon for each vehicle based on its drop-off points.
 
-Safe Ceiling: Aim for ≤ 15 total stops post-merger.
+Haversine Matrix: Calculate the distance between Target centroids and all Donor centroids. Identify the top 3 closest Donors for every Target.
 
-Hard Limit: If a Donor’s total unique stops would exceed 18, skip that Donor and move to the next closest candidate.
+The 40/30/30 Rule: Split the Target’s unique stop count: 40% to Primary, 30% to Secondary, 30% to Tertiary.
+
+Constraint Check: * Safe Ceiling: Flag any Donor exceeding 15 total stops post-merger.
+
+Hard Limit: If a Donor would exceed 18 unique stops, skip to the next closest candidate.
 
 Phase 3: Executive Summary (Strategic Format)
-Structure the output using these specific headers:
 
-Executive Summary: A high-level overview of total fleet reduction potential (Target count vs. Total fleet).
+Executive Summary: Fleet reduction potential (Target vs. Total Fleet).
 
-Key Findings: * Total redundant Store Splits identified.
-
-Total volume (Orders/Weight) moved from Targets to Donors.
+Key Findings: Total Store Splits and volume (Orders/Weight) moved.
 
 Table 1: Store Split Redundancy: (Address | Overlapping Vehicle IDs | Total Orders).
 
 Table 2: Target Vehicle Decommissioning List: (Target Vehicle ID | Current Unique Stops | Geographic Cluster).
 
-Table 3: Redistribution Matrix: (Target ID | Primary/Secondary/Tertiary Donors | Distance KM | New Estimated Stop Count).
+Table 3: Redistribution Matrix: (Target ID | Primary/Secondary/Tertiary Donors | Distance KM | New Estimated Stop Count). Note: List all Targets identified; do not summarize.
 
-Risk Assessment: Identify any "High-Density Donors" pushed to >15 stops and their weight utilization risks.
+Risk Assessment: Identify Donors pushed to >15 stops and potential service time risks.
 
-Cost-Benefit Analysis: Estimated % reduction in fixed vehicle costs and improvement in "Stops per KM" density.
+Cost-Benefit Analysis: Estimated % reduction in fixed costs and density improvement.
 
-Recommendations: Immediate tactical steps for the dispatch team to resolve store splits and execute the route merges.
+Recommendations: Immediate tactical steps for the dispatch team.
 
 Strict Directives:
 
-Naming: Use the exact vehicle_number strings found in the file.
+Naming: Use exact vehicle_number strings.
 
-Data Integrity: If dropoff_location_lat/lon is missing, report "Geographic Data Incomplete" for that row.
+Data Integrity: Report "Geographic Data Incomplete" if Lat/Lon is missing for any row.
 
-Zero Hallucination: Only use the provided dataset; do not estimate vehicle capacities not found in the capacity_g column.
+Zero Hallucination: Only use the provided dataset.
